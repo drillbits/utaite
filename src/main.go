@@ -8,12 +8,48 @@ import (
 	"strings"
 	"time"
 
+	"utaite"
+
+	"github.com/favclip/ucon"
+	"github.com/favclip/ucon/swagger"
 	"golang.org/x/net/context"
 	"google.golang.org/appengine"
 )
 
 func init() {
-	http.HandleFunc("/", handler)
+	// ucon
+	ucon.Middleware(UseAppengineContext)
+	ucon.Orthodox()
+
+	// Swagger
+	swPlugin := NewSwaggerPlugin()
+	ucon.Plugin(swPlugin)
+
+	// Services
+	var hInfo *swagger.HandlerInfo
+	{
+		// Member
+		s := &utaite.MemberService{}
+		tag := swPlugin.AddTag(&swagger.Tag{
+			Name:        "Member",
+			Description: "utaite Member",
+		})
+
+		hInfo = swagger.NewHandlerInfo(s.Get)
+		ucon.Handle("GET", "/api/member/{id}", hInfo)
+		hInfo.Description, hInfo.Tags = "get member", []string{tag.Name}
+
+		hInfo = swagger.NewHandlerInfo(s.List)
+		ucon.Handle("GET", "/api/member", hInfo)
+		hInfo.Description, hInfo.Tags = "get member list", []string{tag.Name}
+	}
+
+	// Static
+	ucon.HandleFunc("GET", "/", handler)
+
+	// Mux
+	ucon.DefaultMux.Prepare()
+	http.Handle("/", ucon.DefaultMux)
 }
 
 func fileExists(filePath string) bool {

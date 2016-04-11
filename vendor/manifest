@@ -2,11 +2,30 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "github.com/favclip/qbg/qbgutils",
+			"repository": "https://github.com/favclip/qbg",
+			"revision": "e63c057d18324155f3dc8193e69e880962286979",
+			"branch": "master",
+			"path": "/qbgutils"
+		},
+		{
+			"importpath": "github.com/favclip/ucon",
+			"repository": "https://github.com/favclip/ucon",
+			"revision": "e98b91b9aa54a2b617e5272c7e1b7a3dcc0c8664",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/golang/protobuf/proto",
 			"repository": "https://github.com/golang/protobuf",
 			"revision": "dda510ac0fd43b39770f22ac6260eb91d377bce3",
 			"branch": "master",
 			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/mjibson/goon",
+			"repository": "https://github.com/mjibson/goon",
+			"revision": "f99149e651e1f35d52dfbf8ac32aa87385d828fc",
+			"branch": "master"
 		},
 		{
 			"importpath": "golang.org/x/net/context",
