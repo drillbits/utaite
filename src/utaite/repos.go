@@ -11,15 +11,19 @@ type MemberRepository struct {
 	ctx context.Context
 }
 
+func (repo *MemberRepository) kind() string {
+	return "Member"
+}
+
 func (repo *MemberRepository) key(id int64) *datastore.Key {
-	return datastore.NewKey(repo.ctx, "Member", "", id, nil)
+	return datastore.NewKey(repo.ctx, repo.kind(), "", id, nil)
 }
 
 func (repo *MemberRepository) New(dst *Member) (*datastore.Key, error) {
 	dst.CreatedAt = time.Now()
 	dst.UpdatedAt = time.Now()
 
-	key := datastore.NewIncompleteKey(repo.ctx, "Member", nil)
+	key := datastore.NewIncompleteKey(repo.ctx, repo.kind(), nil)
 	key, err := datastore.Put(repo.ctx, key, dst)
 	if err != nil {
 		return nil, err
@@ -37,7 +41,7 @@ func (repo *MemberRepository) Find(dst *Member, id int64) error {
 }
 
 func (repo *MemberRepository) All(dst *[]*Member) error {
-	q := datastore.NewQuery("Member").Order("-UpdatedAt")
+	q := datastore.NewQuery(repo.kind()).Order("-UpdatedAt")
 	_, err := q.GetAll(repo.ctx, dst)
 	if err != nil {
 		return err
