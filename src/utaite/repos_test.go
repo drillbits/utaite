@@ -2,7 +2,6 @@ package utaite
 
 import (
 	"math"
-	"strings"
 	"testing"
 	"time"
 
@@ -36,26 +35,9 @@ func TestMemberRepositoryNew(t *testing.T) {
 	if actual.Name != member.Name {
 		t.Fatalf("expected: `%v`, but got: `%v`", member.Name, actual.Name)
 	}
-
-	// Type mismatch
-	_, err = repo.New(&Role{})
-	if err == nil {
-		t.Fatal("error expected")
-	}
-	if !strings.Contains(err.Error(), "type mismatch:") {
-		t.Fatalf("expected: `%v`, but got: `%v`", "type mismatch: ...", err)
-	}
 }
 
-func TestMemberRepositoryFindByName(t *testing.T) {
-	repo := MemberRepository{}
-	err := repo.FindByName(&struct{}{}, "")
-	if err.Error() != "Cannot find by name" {
-		t.Fatalf("expected: `%v`, but got: `%v`", "Cannot find by name", err)
-	}
-}
-
-func TestMemberRepositoryFindByID(t *testing.T) {
+func TestMemberRepositoryFind(t *testing.T) {
 	ctx, done, err := aetest.NewContext()
 	if err != nil {
 		t.Fatal(err)
@@ -71,7 +53,7 @@ func TestMemberRepositoryFindByID(t *testing.T) {
 	id := k.IntID()
 
 	actual := &Member{}
-	err = repo.FindByID(actual, id)
+	err = repo.Find(actual, id)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,18 +66,9 @@ func TestMemberRepositoryFindByID(t *testing.T) {
 	}
 
 	// Not found
-	err = repo.FindByID(actual, math.MaxInt64)
+	err = repo.Find(actual, math.MaxInt64)
 	if err != datastore.ErrNoSuchEntity {
 		t.Fatalf("member: %d exists", math.MaxInt64)
-	}
-
-	// Type mismatch
-	err = repo.FindByID(&Role{}, id)
-	if err == nil {
-		t.Fatal("error expected")
-	}
-	if !strings.Contains(err.Error(), "type mismatch:") {
-		t.Fatalf("expected: `%v`, but got: `%v`", "type mismatch: ...", err)
 	}
 }
 
@@ -146,14 +119,5 @@ func TestMemberRepositoryAll(t *testing.T) {
 	}
 	if members[1].Name != "test2" {
 		t.Fatalf("expected: `%v`, but got: `%v`", "test1", members[1].Name)
-	}
-
-	// Type mismatch
-	err = repo.All(members)
-	if err == nil {
-		t.Fatal("error expected")
-	}
-	if !strings.Contains(err.Error(), "type mismatch:") {
-		t.Fatalf("expected: `%v`, but got: `%v`", "type mismatch: ...", err)
 	}
 }

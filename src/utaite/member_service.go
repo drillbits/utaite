@@ -20,7 +20,7 @@ func (s *MemberService) Get(ctx context.Context, r *http.Request, req *IntIDRequ
 
 	repo := MemberRepository{ctx: ctx}
 	member := &Member{}
-	err := repo.FindByID(member, req.ID)
+	err := repo.Find(member, req.ID)
 	if err != nil {
 		if err == datastore.ErrNoSuchEntity {
 			return nil, &HttpError{http.StatusNotFound, fmt.Sprintf("Member: %d not found", req.ID)}
